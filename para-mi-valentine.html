@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Para Camila 💖</title>
+
+  <style>
+    body{
+      margin:0;
+      min-height:100vh;
+      display:grid;
+      place-items:center;
+      font-family: system-ui, Arial;
+      background: radial-gradient(circle at top, #ffe6f0, #f3b6c6, #d98aa1);
+    }
+
+    .card{
+      width:min(520px, 92vw);
+      background: white;
+      border-radius: 26px;
+      padding: 24px;
+      box-shadow: 0 22px 60px rgba(0,0,0,.18);
+      text-align:center;
+    }
+
+    .gift-btn{
+      width:180px;
+      height:180px;
+      border-radius:30px;
+      border:none;
+      cursor:pointer;
+      background: linear-gradient(135deg, #ff4d6d, #ff8fab);
+      position:relative;
+      overflow:hidden;
+      box-shadow: 0 16px 40px rgba(255,77,109,.35);
+    }
+
+    .ribbon-v,.ribbon-h{
+      position:absolute;
+      background:white;
+    }
+    .ribbon-v{
+      width:26px; height:100%;
+      left:50%; transform:translateX(-50%);
+    }
+    .ribbon-h{
+      height:26px; width:100%;
+      top:50%; transform:translateY(-50%);
+    }
+
+    .hint{
+      margin: 14px 0 18px;
+      font-weight:700;
+    }
+
+    .reveal{
+      display:none;
+      animation: pop .5s ease both;
+    }
+    @keyframes pop{
+      from{ opacity:0; transform:translateY(10px); }
+      to{ opacity:1; transform:none; }
+    }
+
+    img{
+      width:100%;
+      border-radius:18px;
+      margin-top:14px;
+      box-shadow: 0 12px 30px rgba(0,0,0,.18);
+    }
+
+    .teamo{
+      font-size:32px;
+      font-weight:900;
+      margin: 10px 0 4px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="card">
+
+    <div id="giftWrap">
+      <button id="giftBtn" class="gift-btn">
+        <span class="ribbon-v"></span>
+        <span class="ribbon-h"></span>
+      </button>
+      <div class="hint">Toca el regalo para abrirlo 🎁</div>
+    </div>
+
+    <div id="reveal" class="reveal">
+      <div class="teamo">Te amo Camila, mi wawa ❤️</div>
+
+      <!-- Gatito aleatorio, siempre distinto -->
+      <img
+        id="catImg"
+        alt="Gatito diciendo te amo"
+      />
+    </div>
+
+  </div>
+
+  <script>
+    const giftBtn = document.getElementById("giftBtn");
+    const giftWrap = document.getElementById("giftWrap");
+    const reveal = document.getElementById("reveal");
+    const catImg = document.getElementById("catImg");
+
+    function cargarGatito(){
+      const texto = encodeURIComponent("Te amo Camila, mi wawa ❤️");
+      // timestamp para forzar gatito nuevo siempre
+      catImg.src = `https://cataas.com/cat/says/${texto}?size=50&color=white&background=000&${Date.now()}`;
+    }
+
+    giftBtn.addEventListener("click", () => {
+      giftWrap.style.display = "none";
+      reveal.style.display = "block";
+      cargarGatito();
+    });
+  </script>
+</body>
+</html>
