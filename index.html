@@ -1,123 +1,243 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Para Camila 💖</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Para ti ❤️</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #fce4ec;
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            overflow: hidden;
+            /* Evita el rebote elástico en iPhone */
+            overscroll-behavior: none;
+        }
 
-  <style>
-    body{
-      margin:0;
-      min-height:100vh;
-      display:grid;
-      place-items:center;
-      font-family: system-ui, Arial;
-      background: radial-gradient(circle at top, #ffe6f0, #f3b6c6, #d98aa1);
-    }
+        .book {
+            position: relative;
+            width: 300px; /* Un poco más angosto para asegurar que entre en pantallas de iPhone pequeñas */
+            height: 460px;
+            perspective: 1500px;
+            transition: transform 1s;
+        }
 
-    .card{
-      width:min(520px, 92vw);
-      background: white;
-      border-radius: 26px;
-      padding: 24px;
-      box-shadow: 0 22px 60px rgba(0,0,0,.18);
-      text-align:center;
-    }
+        .page {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            transition: transform 1s cubic-bezier(0.645, 0.045, 0.355, 1);
+            transform-style: preserve-3d;
+            transform-origin: left;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
 
-    .gift-btn{
-      width:180px;
-      height:180px;
-      border-radius:30px;
-      border:none;
-      cursor:pointer;
-      background: linear-gradient(135deg, #ff4d6d, #ff8fab);
-      position:relative;
-      overflow:hidden;
-      box-shadow: 0 16px 40px rgba(255,77,109,.35);
-    }
+        .front {
+            background-color: #d81b60;
+            color: white;
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            z-index: 2;
+            padding: 20px;
+            box-sizing: border-box;
+            /* Mejora renderizado en iOS */
+            -webkit-backface-visibility: hidden;
+        }
 
-    .ribbon-v,.ribbon-h{
-      position:absolute;
-      background:white;
-    }
-    .ribbon-v{
-      width:26px; height:100%;
-      left:50%; transform:translateX(-50%);
-    }
-    .ribbon-h{
-      height:26px; width:100%;
-      top:50%; transform:translateY(-50%);
-    }
+        .back-of-front {
+            background-color: #fff0f5;
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            transform: rotateY(180deg);
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden; /* iOS Fix */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 1;
+            padding: 25px;
+            box-sizing: border-box;
+            border-right: 2px solid #ddd;
+            text-align: center;
+            color: #d81b60;
+        }
 
-    .hint{
-      margin: 14px 0 18px;
-      font-weight:700;
-    }
+        .right-page {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: white;
+            z-index: 0;
+            border-radius: 0 10px 10px 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
 
-    .reveal{
-      display:none;
-      animation: pop .5s ease both;
-    }
-    @keyframes pop{
-      from{ opacity:0; transform:translateY(10px); }
-      to{ opacity:1; transform:none; }
-    }
+        /* --- BOTONES --- */
+        .buttons-container {
+            display: flex;
+            flex-direction: column; /* En vertical para iPhone es más fácil de leer */
+            gap: 15px;
+            margin-top: 30px;
+            width: 100%;
+            align-items: center;
+        }
 
-    img{
-      width:100%;
-      border-radius:18px;
-      margin-top:14px;
-      box-shadow: 0 12px 30px rgba(0,0,0,.18);
-    }
+        button {
+            padding: 15px 40px;
+            font-size: 1.3rem;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.2s;
+            width: 80%;
+            -webkit-tap-highlight-color: transparent; /* Quita el cuadro azul al tocar en iPhone */
+        }
 
-    .teamo{
-      font-size:32px;
-      font-weight:900;
-      margin: 10px 0 4px;
-    }
-  </style>
+        .btn-si { background-color: white; color: #d81b60; border: 2px solid white; }
+        .btn-no { background-color: transparent; color: white; border: 2px solid white; }
+
+        /* Estilo para cuando el botón se transforma */
+        .btn-fake-no {
+            background-color: #ff80ab !important;
+            color: white !important;
+            border-color: #ff80ab !important;
+            transform: scale(0.95);
+        }
+
+        /* --- SLIDESHOW --- */
+        .slideshow-container {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            overflow: hidden;
+            border-radius: 0 10px 10px 0;
+        }
+
+        .slide {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            position: absolute;
+            top: 0;
+            left: 0;
+            opacity: 0;
+            transition: opacity 1.5s ease-in-out;
+        }
+        .slide.active { opacity: 1; }
+
+        /* --- CONTROL DE VISTA EN MÓVIL --- */
+        .book.open .page {
+            transform: rotateY(-180deg);
+        }
+
+        /* Truco especial para iPhone: 
+           Al abrir, desvanecemos el texto de la izquierda para ver bien las fotos */
+        @media (max-width: 768px) {
+            .book.open .page {
+                opacity: 0; /* Se vuelve invisible después de girar */
+                pointer-events: none; /* Ya no se puede tocar */
+                transition: transform 1s, opacity 0.5s 0.5s; /* Gira primero, luego desaparece */
+            }
+        }
+    </style>
 </head>
-
 <body>
-  <div class="card">
 
-    <div id="giftWrap">
-      <button id="giftBtn" class="gift-btn">
-        <span class="ribbon-v"></span>
-        <span class="ribbon-h"></span>
-      </button>
-      <div class="hint">Toca el regalo para abrirlo 🎁</div>
+    <audio id="music" loop>
+        <source src="cancion.mp3" type="audio/mpeg">
+    </audio>
+
+    <div class="book" id="book">
+        <div class="page">
+            <div class="front">
+                <h1>Hola mi amor ❤️</h1>
+                <p>Tengo una pregunta...</p>
+                <h2>¿Quieres ser mi Valentine?</h2>
+                
+                <div class="buttons-container">
+                    <button class="btn-si" id="btnSi" onclick="accionTrampa()">SÍ</button>
+                    <button class="btn-no" onclick="abrirLibro()">NO</button>
+                </div>
+            </div>
+
+            <div class="back-of-front">
+                <h2>¿Segura que no? 🤨</h2>
+                <p>Mmm... sospechoso.</p>
+                <p>Mira esto a ver si cambias de opinión...</p>
+            </div>
+        </div>
+
+        <div class="right-page">
+            <div class="slideshow-container">
+                <img src="foto1.jpeg" class="slide active">
+                <img src="foto2.jpeg" class="slide">
+                <img src="foto3.jpeg" class="slide">
+                </div>
+        </div>
     </div>
 
-    <div id="reveal" class="reveal">
-      <div class="teamo">Te amo Camila, mi wawa ❤️</div>
+    <script>
+        let musicPlaying = false;
+        let slideIndex = 0;
 
-      <!-- Gatito aleatorio, siempre distinto -->
-      <img
-        id="catImg"
-        alt="Gatito diciendo te amo"
-      />
-    </div>
+        function accionTrampa() {
+            const btn = document.getElementById('btnSi');
+            
+            // 1. CAMBIO VISUAL INSTANTÁNEO
+            btn.innerText = "NO";
+            btn.className = "btn-fake-no"; // Cambia a rojo
+            
+            // 2. PEQUEÑA PAUSA (Para que ella lea "NO" y se asuste un poco)
+            setTimeout(() => {
+                abrirLibro();
+            }, 600); // 0.6 segundos de drama
+        }
 
-  </div>
+        function abrirLibro() {
+            document.getElementById('book').classList.add('open');
+            
+            // Reproducir música (Funciona en iPhone porque viene de un click)
+            const audio = document.getElementById('music');
+            if (!musicPlaying) {
+                audio.volume = 0.5;
+                audio.play().catch(e => console.log("Error audio: ", e));
+                musicPlaying = true;
+            }
 
-  <script>
-    const giftBtn = document.getElementById("giftBtn");
-    const giftWrap = document.getElementById("giftWrap");
-    const reveal = document.getElementById("reveal");
-    const catImg = document.getElementById("catImg");
+            iniciarSlideshow();
+        }
 
-    function cargarGatito(){
-      const texto = encodeURIComponent("Te amo Camila, mi wawa ❤️");
-      // timestamp para forzar gatito nuevo siempre
-      catImg.src = `https://cataas.com/cat/says/${texto}?size=50&color=white&background=000&${Date.now()}`;
-    }
-
-    giftBtn.addEventListener("click", () => {
-      giftWrap.style.display = "none";
-      reveal.style.display = "block";
-      cargarGatito();
-    });
-  </script>
+        function iniciarSlideshow() {
+            const slides = document.getElementsByClassName("slide");
+            if (slides.length === 0) return;
+            
+            setInterval(() => {
+                slides[slideIndex].classList.remove("active");
+                slideIndex = (slideIndex + 1) % slides.length;
+                slides[slideIndex].classList.add("active");
+            }, 3000);
+        }
+    </script>
 </body>
 </html>
