@@ -6,7 +6,6 @@
     <title>Para ti ❤️</title>
     
     <style>
-        /* Importaciones siempre arriba */
         @import url('https://fonts.googleapis.com/css2?family=Indie+Flower&display=swap');
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
 
@@ -63,7 +62,7 @@
         }
         .carta-container h2 { font-size: 2rem; margin-bottom: 40px; line-height: 1.3; }
 
-        /* RULETA CIRCULAR (40s) */
+        /* RULETA CIRCULAR */
         .orbit-container {
             position: absolute; width: 700px; height: 700px; z-index: 150;
             border-radius: 50%; animation: spinOrbit 40s linear infinite; pointer-events: none;
@@ -85,12 +84,6 @@
         .pos-1 { top: 0%; left: 50%; } .pos-2 { top: 25%; left: 93.3%; }
         .pos-3 { top: 75%; left: 93.3%; } .pos-4 { top: 100%; left: 50%; }
         .pos-5 { top: 75%; left: 6.7%; } .pos-6 { top: 25%; left: 6.7%; }
-
-        @media (max-width: 600px) {
-            .orbit-container { width: 450px; height: 450px; }
-            .photo-wrapper { width: 70px; height: 70px; margin-top: -35px; margin-left: -35px; }
-            .carta-container { width: 280px; height: 360px; }
-        }
 
         /* BOTONES (PEGADITOS) */
         .checkbox-container { 
@@ -156,7 +149,6 @@
         .cover { z-index: 25; background-color: #5d4037; }
         .cover-front {
             position: absolute; width: 100%; height: 100%; backface-visibility: hidden;
-            /* SE USA PORTADA.JPEG */
             background: url('portada.jpeg') no-repeat center center; background-size: cover;
             border-radius: 5px 15px 15px 5px; box-shadow: 10px 10px 30px rgba(0,0,0,0.5);
         }
@@ -200,7 +192,7 @@
         
         .flipped { transform: rotateY(-180deg); }
 
-        /* Z-INDEX REAJUSTADO PARA 11 PÁGINAS + PORTADA */
+        /* Z-INDEX PARA PÁGINAS */
         #page1 { z-index: 22; } #page2 { z-index: 21; } #page3 { z-index: 20; }
         #page4 { z-index: 19; } #page5 { z-index: 18; } #page6 { z-index: 17; }
         #page7 { z-index: 16; } #page8 { z-index: 15; } #page9 { z-index: 14; }
@@ -208,13 +200,38 @@
 
         @keyframes popIn { 0% { transform: scale(0); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
 
-        /* --- NUEVO: ESCENA DEL "NO" DIRECTO --- */
+        /* --- ESCENA DEL "NO" DIRECTO --- */
         #escenaNoDirecto {
-            display: none; /* Oculto por defecto */
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.95); z-index: 2000;
             justify-content: center; align-items: center; flex-direction: column;
             opacity: 0; transition: opacity 0.5s ease-in;
+        }
+
+        /* --- ¡AQUÍ ESTÁ LA MAGIA PARA CELULARES! --- */
+        @media (max-width: 600px) {
+            /* 1. Ajustamos la Ruleta para que no sea gigante */
+            .orbit-container { width: 450px; height: 450px; }
+            .photo-wrapper { width: 70px; height: 70px; margin-top: -35px; margin-left: -35px; }
+            
+            /* 2. Ajustamos la Carta */
+            .carta-container { width: 280px; height: 360px; }
+            .carta-container h2 { font-size: 1.5rem; }
+
+            /* 3. ¡EL FIX DEL LIBRO! Lo hacemos más pequeño (scale 0.6) */
+            .book-wrapper {
+                transform: scale(0.6) !important; /* <--- ESTO LO ARREGLA */
+                margin-top: -50px; /* Lo subimos un poquito para que quede centrado */
+            }
+
+            /* 4. Texto del drama más pequeño */
+            .drama-text {
+                font-size: 1.5rem !important;
+                width: 90%;
+            }
+            
+            /* 5. Fotos del caos ajustadas */
+            .single-photo { max-width: 90% !important; }
         }
 
     </style>
@@ -270,7 +287,6 @@
         <p style="color: white; font-family: 'Indie Flower', cursive; font-size: 2.5rem; margin-top: 30px;">😢💔</p>
     </div>
 
-
     <div class="drama-container" id="dramaScreen">
         <div class="drama-text" id="dramaText"></div>
         <div class="single-photo-container" id="singlePhotoContainer"></div>
@@ -294,7 +310,6 @@
     </div>
 
     <script>
-        // --- PUNTO 3: Función Helper para crear imágenes (DOM Seguro) ---
         function mostrarFotoDinamica(src) {
             const container = document.getElementById('singlePhotoContainer');
             container.innerHTML = '';
@@ -324,35 +339,20 @@
             setTimeout(() => { document.getElementById('escenaPrincipal').classList.add('scene-visible'); }, 300);
         }
 
-        // --- FUNCIÓN SI APRETA "SÍ" ---
         function activarSi() {
             const noWrapper = document.getElementById('no-wrapper');
-            noWrapper.classList.add('checked'); // Truco visual: Marca el NO
-            
-            // IMPORTANTE: Desactivamos el clic en el NO para que no interrumpa el drama
+            noWrapper.classList.add('checked'); 
             noWrapper.removeAttribute('onclick');
-
             setTimeout(() => { comenzarSecuenciaDrama(); }, 2000);
         }
 
-        // --- NUEVA FUNCIÓN: SI APRETA "NO" DIRECTAMENTE ---
         function activarNoDirecto() {
-            // 1. Marcar visualmente
             document.getElementById('no-wrapper').classList.add('checked');
-
-            // 2. Ocultar la escena principal gradualmente
             document.getElementById('escenaPrincipal').style.opacity = '0';
-
-            // 3. Mostrar la escena del NO rotundo
             const escenaNo = document.getElementById('escenaNoDirecto');
-            escenaNo.style.display = 'flex'; // Hacerla visible en el layout
-            
-            // Pequeño delay para que la transición de opacidad funcione
-            setTimeout(() => {
-                escenaNo.style.opacity = '1';
-            }, 100);
+            escenaNo.style.display = 'flex';
+            setTimeout(() => { escenaNo.style.opacity = '1'; }, 100);
         }
-
 
         function comenzarSecuenciaDrama() {
             const escena = document.getElementById('escenaPrincipal');
@@ -366,17 +366,14 @@
             const dramaText = document.getElementById('dramaText');
             const bromaAudio = document.getElementById('sfx-broma');
 
-            // FOTO 7
             dramaText.innerText = "¿Segura que no quieres? 🤨";
             mostrarFotoDinamica('foto7.jpeg');
 
-            // FOTO 8
             setTimeout(() => {
                 dramaText.innerText = "Quizás esto te haga cambiar de parecer...";
                 mostrarFotoDinamica('foto8.jpeg');
             }, 3000);
 
-            // FOTO 9 (Rápido + Música)
             setTimeout(() => {
                 bromaAudio.volume = 1.0;
                 bromaAudio.play().catch(e => console.log(e));
@@ -384,12 +381,10 @@
                 mostrarFotoDinamica('foto9.jpeg');
             }, 6000);
 
-            // FOTO 10 (Rápido)
             setTimeout(() => {
                 mostrarFotoDinamica('foto10.jpeg');
             }, 8000);
 
-            // NA MENTIRA
             setTimeout(() => {
                 bromaAudio.pause(); bromaAudio.currentTime = 0;
                 const musica = document.getElementById('music');
@@ -400,7 +395,6 @@
                 dramaText.innerText = "¡NA MENTIRA XD! 🤣";
             }, 10000);
 
-            // MOSTRAR LIBRO
             setTimeout(() => {
                 dramaText.style.fontSize = "2rem";
                 dramaText.innerText = "Mira nuestra historia... ❤️";
@@ -409,7 +403,6 @@
             }, 14000);
         }
 
-        // --- PUNTO 2: Loop Optimizado ---
         function abrirLibroSecuencia() {
             const book = document.getElementById('theBook');
             const cover = document.getElementById('coverPage');
@@ -439,7 +432,7 @@
             
             setTimeout(() => {
                 bookWrapper.style.display = "none";
-                mostrarFotoDinamica('foto22.jpeg'); // Foto final
+                mostrarFotoDinamica('foto22.jpeg');
             }, 1000);
         }
     </script>
